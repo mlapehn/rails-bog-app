@@ -531,7 +531,7 @@ Editing a specific creature requires two methods:
   Rails.application.routes.draw do
     root to: "creatures#index"
 
-    resources :creatures, except: [:delete]
+    resources :creatures, except: [:delete, :update]
   end
   ```
   </p>
@@ -607,7 +607,7 @@ The update route will use the `id` of the creature to be updated.
   Rails.application.routes.draw do
     root to: "creatures#index"
 
-    resources :creatures
+    resources :creatures, except: [:delete]
   end
   ```
   </p>
@@ -678,13 +678,7 @@ Following a similar pattern to our other routes, create a route to `destroy` (de
   Rails.application.routes.draw do
     root to: "creatures#index"
 
-    get "/creatures", to: "creatures#index", as: "creatures"
-    get "/creatures/new", to: "creatures#new", as: "new_creature"
-    post "/creatures", to: "creatures#create"
-    get "/creatures/:id", to: "creatures#show", as: "creature"
-    get "/creatures/:id/edit", to: "creatures#edit", as: "edit_creature"
-    patch "/creatures/:id", to: "creatures#update"
-    delete "/creatures/:id", to: "creatures#destroy"
+    resources :creatures
   end
   ```
   </p>
