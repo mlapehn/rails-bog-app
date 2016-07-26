@@ -6,7 +6,7 @@
 | Implement **form helpers** in a  Rails application. |
 | Get some reps on building a Rails CRUD app. |
 
-Researchers are collecting data on a local bog and need an app to quickly record field data. Your goal is to create a **Bog App**. If you get stuck at any point, feel free to reference the [solution branch](../../tree/solution).
+Researchers are collecting data on a local bog and need an app to quickly record field data. Your goal is to create a **Bog App**.
 
 We want to format this project as a "time trial." You will be building the app 4 times, each time gaining skills through repetition. Here's how we want you to work:
 
@@ -14,6 +14,9 @@ We want to format this project as a "time trial." You will be building the app 4
   2. Reset your progress to the beginning by checking out master again `git checkout master` then make a `second-run` branch: `git checkout -b second-run`. Go through the lab another time. This time, time yourself on how long it takes you. Push yourself to peek at the hints more sparingly and code as much as you can on your own. Again, make sure to commit your work.
   3. Reset your progress to the beginning by checking out master again `git checkout master` then make a `third-run` branch: `git checkout -b third-run`. Repeat the lab a third time. Try not to use the instructions to build your bog app and refer to them only when very stuck. Time yourself again and aim to build the app faster than you built it the second time around. Make sure you have roughly the same number of commits as you had on your second run. Version control isn't the place to cut corners!
   4. Reset your progress to the beginning by checking out master again `git checkout master` then make a `fourth-run` branch: `git checkout -b fourth-run`. This is the fourth time; streamline your process. Squash bugs faster and look at the resources less. Commit often and build it as fast as you can!
+
+The hints will build the app piece by piece. If you use the Rails generators you may have more or less code to work 
+with at each point and need to adapt.
 
 ## Background
 
@@ -58,9 +61,7 @@ Your app should be up and running at `localhost:3000`.
 
 #### 2. Add Bootstrap to your project
 
-Rails handles CSS and JavaScript with a system called the asset pipeline. We'll go over it more next week, but for now, you'll add Bootstrap via the asset pipeline.
-
-Third-party libraries belong in the `vendor/assets` sub-directory of your Rails app. Use the following Terminal command to download the Bootstrap CSS file (via `curl`) and save it in a new `bootstrap-3.3.6.min.css` file inside the `vendor/assets/stylesheets` sub-directory.
+You can add Bootstrap via a gem or by downloading it. If you download it remember that third-party libraries belong in the `vendor/assets` sub-directory of your Rails app. Here's a terminal command to download the Bootstrap CSS file (via `curl`) and save it in a new `bootstrap-3.3.6.min.css` file inside the `vendor/assets/stylesheets` sub-directory.
 
 ```zsh
 ➜  curl https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css > vendor/assets/stylesheets/bootstrap-3.3.6.min.css
@@ -84,7 +85,7 @@ To include the Bootstrap file you just downloaded, require it in `app/assets/sty
 
 #### 3. Define the `root` and creatures `index` routes
 
-In Sublime or Atom, open up `config/routes.rb`. Inside the routes `draw` block, erase all the commented text.
+In Sublime, open up `config/routes.rb`. Inside the routes `draw` block, erase all the commented text.
 <details>
   <summary>Throughout the instructions, there will be hints like this one that show you the code. When you're running through the project a second time, try to use these less. The third time, try not to use them at all. Hint: `routes.rb` should now look exactly like this...</summary>
   <p>
@@ -113,7 +114,7 @@ Your routes tell your app how to direct **HTTP requests** to **controller action
   Rails.application.routes.draw do
     root "creatures#index"
 
-    get "/creatures", to: "creatures#index", as: "creatures"
+    resources creatures, only: [:index]
 
   end
   ```
@@ -182,7 +183,7 @@ irb(main):001:0> Creature.create({name: "Yoda", description: "900-year-old Jedi 
 
 When you create an application in development, you typically want some mock data to play with. In Rails, you can just drop this into the `db/seeds.rb` file.
 
-Back in Atom, add some seed data to `db/seeds.rb`:
+Back in Sublime, add some seed data to `db/seeds.rb`:
 
 ```ruby
 #
@@ -237,8 +238,7 @@ The Rails convention is to make a form for new creatures at the `/creatures/new`
   Rails.application.routes.draw do
     root to: "creatures#index"
 
-    get "/creatures", to: "creatures#index"
-    get "/creatures/new", to: "creatures#new"
+    resources :creatures, only: [:index, :new]
   end
   ```
   </p>
@@ -310,9 +310,7 @@ Your new creature form has `action="/creatures"` and `method="POST"`. The `POST 
   Rails.application.routes.draw do
     root to: "creatures#index"
 
-    get "/creatures", to: "creatures#index", as: "creatures"
-    get "/creatures/new", to: "creatures#new", as: "new_creature"
-    post "/creatures", to: "creatures#create"
+    resources :creatures, only: [:create, :index, :new]
 
   end
   ```
@@ -420,10 +418,7 @@ First, define a `show` route.
   Rails.application.routes.draw do
     root to: "creatures#index"
 
-    get "/creatures", to: "creatures#index", as: "creatures"
-    get "/creatures/new", to: "creatures#new", as: "new_creature"
-    post "/creatures", to: "creatures#create"
-    get "/creatures/:id", to: "creatures#show", as: "creature"
+    resources :creatures, except: [:delete, :edit, :update] 
   end
   ```
   </p>
@@ -536,11 +531,7 @@ Editing a specific creature requires two methods:
   Rails.application.routes.draw do
     root to: "creatures#index"
 
-    get "/creatures", to: "creatures#index", as: "creatures"
-    get "/creatures/new", to: "creatures#new", as: "new_creature"
-    post "/creatures", to: "creatures#create"
-    get "/creatures/:id", to: "creatures#show", as: "creature"
-    get "/creatures/:id/edit", to: "creatures#edit", as: "edit_creature"
+    resources :creatures, except: [:delete]
   end
   ```
   </p>
@@ -603,7 +594,7 @@ Go to `localhost:3000/creatures/1/edit` in the browser to see what it looks like
 
 #### 4. Define a route to `update` a specific creature
 
-The update route will use the `id` of the creature to be updated. In Express, you decided between `PUT /creatures/:id` and `PATCH /creatures/:id`, depending on the type of update you wanted to do. In Rails, we'll need to add `PATCH /creatures/:id` only to our routes.
+The update route will use the `id` of the creature to be updated. 
 
 <details>
   <summary>Hint:</summary>
@@ -616,12 +607,7 @@ The update route will use the `id` of the creature to be updated. In Express, yo
   Rails.application.routes.draw do
     root to: "creatures#index"
 
-    get "/creatures", to: "creatures#index", as: "creatures"
-    get "/creatures/new", to: "creatures#new", as: "new_creature"
-    post "/creatures", to: "creatures#create"
-    get "/creatures/:id", to: "creatures#show", as: "creature"
-    get "/creatures/:id/edit", to: "creatures#edit", as: "edit_creature"
-    patch "/creatures/:id", to: "creatures#update"
+    resources :creatures
   end
   ```
   </p>
