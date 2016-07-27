@@ -8,12 +8,15 @@
 
 Researchers are collecting data on a local bog and need an app to quickly record field data. Your goal is to create a **Bog App**.
 
-We want to format this project as a "time trial." You will be building the app 4 times, each time gaining skills through repetition. Here's how we want you to work:
+We want to this project as a "muscle memory execercise". We'll work through it once as class; once with a pair and 
+once on your own. The app will be basically the same but you'll gain more skills each time through the repetition.
+Here's how we want you to work:
 
-  1. Start by making a `first-run` branch: `git checkout -b first-run`. Move through the instructions below to build your bog app. Use as many hints as you'd like to check your work and make sure you get through the lab smoothly. Commit your work along the way and at the conclusion.
-  2. Reset your progress to the beginning by checking out master again `git checkout master` then make a `second-run` branch: `git checkout -b second-run`. Go through the lab another time. This time, time yourself on how long it takes you. Push yourself to peek at the hints more sparingly and code as much as you can on your own. Again, make sure to commit your work.
-  3. Reset your progress to the beginning by checking out master again `git checkout master` then make a `third-run` branch: `git checkout -b third-run`. Repeat the lab a third time. Try not to use the instructions to build your bog app and refer to them only when very stuck. Time yourself again and aim to build the app faster than you built it the second time around. Make sure you have roughly the same number of commits as you had on your second run. Version control isn't the place to cut corners!
-  4. Reset your progress to the beginning by checking out master again `git checkout master` then make a `fourth-run` branch: `git checkout -b fourth-run`. This is the fourth time; streamline your process. Squash bugs faster and look at the resources less. Commit often and build it as fast as you can!
+  1. At half mast we'll create the entire the app.
+  2. Make a 'pair-run' branch: `git checkout -b pair-run`. Work together to recreate the app usings the write-up 
+  for reference. Try to use the write-up for what to do while working together to figure out how to do it within the pair. Commit your work along the way and at the conclusion.
+  3. Reset your progress to the beginning by checking out master again `git checkout master` then make a 
+  `individual-run` branch: `git checkout -b individual-run`. Go through the lab another time.  Push yourself to peek at the hints more sparingly and code as much as you can on your own. Again, make sure to commit your work.
 
 The hints will build the app piece by piece. If you use the Rails generators you may have more or less code to work 
 with at each point and need to adapt.
@@ -83,7 +86,7 @@ To include the Bootstrap file you just downloaded, require it in `app/assets/sty
  */
 ```
 
-#### 3. Define the `root` and creatures `index` routes
+#### 3. Define the `root` and creatures routes
 
 In Sublime, open up `config/routes.rb`. Inside the routes `draw` block, erase all the commented text.
 <details>
@@ -101,7 +104,7 @@ In Sublime, open up `config/routes.rb`. Inside the routes `draw` block, erase al
 </details>
 <br>
 
-Your routes tell your app how to direct **HTTP requests** to **controller actions**. Define your `root` route and your creatures `index` route to refer to the index method in the creatures controller:
+Your routes tell your app how to direct **HTTP requests** to **controller actions**. Define your `root` route and your creatures resource routes to set up all of the routes we'll need for the app:
 
 <details>
   <summary>Hint:</summary>
@@ -114,7 +117,7 @@ Your routes tell your app how to direct **HTTP requests** to **controller action
   Rails.application.routes.draw do
     root "creatures#index"
 
-    resources creatures, only: [:index]
+    resources creatures
 
   end
   ```
@@ -223,29 +226,7 @@ Go to `localhost:3000` in the browser. What do you see on the page? If you haven
 
 ## Part II: Make a creature with `new` (form) and `create` (database)
 
-#### 1. Define a route for the `new` creature form
-
-The Rails convention is to make a form for new creatures at the `/creatures/new` path in our browser.
-
-<details>
-  <summary>Hint:</summary>
-  <p>
-  ```ruby
-  #
-  #/config/routes.rb
-  #
-
-  Rails.application.routes.draw do
-    root to: "creatures#index"
-
-    resources :creatures, only: [:index, :new]
-  end
-  ```
-  </p>
-</details>
-<br>
-
-#### 2. Set up the creatures `new` action
+#### 1. Set up the creatures `new` action
 
 When a user sends a GET request to `/creatures/new`, your server will search for a `creatures#new` action, so you need to create a controller method to handle this request. `creatures#new` should render the view `new.html.erb` inside the `app/views/creatures` folder.
 
@@ -271,7 +252,7 @@ When a user sends a GET request to `/creatures/new`, your server will search for
   </p>
 </details>
 
-#### 3. Set up the view for the new creature form
+#### 2. Set up the view for the new creature form
 
 Create the view `new.html.erb` inside the `app/views/creatures` folder. On this view, users should see a form to create new creatures in the database.
 
@@ -292,32 +273,9 @@ Create the view `new.html.erb` inside the `app/views/creatures` folder. On this 
 
 **Note:** The URL you're submitting the form to is `/creatures` because it's the database collection for creatures, and the method is `post` because you're *creating* a new creature.
 
-Go to `localhost:3000/creatures/new` in the browser, and inspect the HTML for the form on the page. `form_for` is a "form helper", and it generates more than what you might guess from the `erb` you wrote in the view. Note the `method` and `action` in the form - what route do you think you should define next?
+Go to `localhost:3000/creatures/new` in the browser, and inspect the HTML for the form on the page. `form_for` is a "form helper", and it generates more than what you might guess from the `erb` you wrote in the view. 
 
-#### 4. Define a route to `create` creatures in the database
-
-Your new creature form has `action="/creatures"` and `method="POST"`. The `POST /creatures` route doesn't exist yet, so go ahead and create it!
-
-<details>
-  <summary> Hint:</summary>
-  <p>
-
-  ```ruby
-  #
-  #/config/routes.rb
-  #
-
-  Rails.application.routes.draw do
-    root to: "creatures#index"
-
-    resources :creatures, only: [:create, :index, :new]
-
-  end
-  ```
-  </p>
-</details>
-
-#### 5. Set up the creatures `create` action
+#### 3. Set up the creatures `create` action
 
 The `POST /creatures` maps to the `creatures#create` controller action, so the next step is to define the controller method to handle this request. `creatures#create` should add a new creature to the database.
 
@@ -354,7 +312,7 @@ The `POST /creatures` maps to the `creatures#create` controller action, so the n
   </p>
 </details>
 
-#### 6. Refactor the `new` creature form
+#### 4. Refactor the `new` creature form
 
 Update your `creatures#new` action to send a new instance of a `Creature` to the new creature form.
 
@@ -401,30 +359,9 @@ This sets `@creature` to a new instance of a `Creature`, which is automatically 
 
 Go to `localhost:3000/creatures/new` again in the browser, and inspect the HTML for the form on the page. Did anything change?
 
-#### 7. Define a route to `show` a specific creature
+#### 5. Setup the creature `show` method
 
-Right now, your app redirects to `/creatures` after creating a new creature, and the new creature shows up at the bottom of the page. Let's make a route for users to see a specific creature. Then, you'll be able to show a new creature by itself right after it's created.
-
-First, define a `show` route.
-
-<details>
-  <summary>Hint:</summary>
-  <p>
-  ```ruby
-  #
-  # config/routes.rb
-  #
-
-  Rails.application.routes.draw do
-    root to: "creatures#index"
-
-    resources :creatures, except: [:delete, :edit, :update] 
-  end
-  ```
-  </p>
-</details>
-
-Now that you have your `show` route, set up the controller action for `creatures#show`.
+Let's set up the controller action for `creatures#show`.
 
 <details>
   <summary>Hint:</summary>
@@ -471,7 +408,7 @@ Next, create the view to display a single creature:
   </p>
 </details>
 
-#### 8. Refactor the `creatures#create` redirect
+#### 6. Refactor the `creatures#create` redirect
 
 The `creatures#create` method currently redirects to `/creatures`. Again, this isn't very helpful for users who want to verify that they successfully created a *single* creature. The best way to fix this is to have it redirect to `/creatures/:id` instead.
 
@@ -518,26 +455,7 @@ Editing a specific creature requires two methods:
 * `edit` displays a form with the existing creature info to be edited by the user
 * `update` changes the creature info in the database when the user submits the form
 
-#### 1. Define a route for the `edit` creature form
-
-<details>
-  <summary>Hint:</summary>
-  <p>
-  ```ruby
-  #
-  # config/routes.rb
-  #
-
-  Rails.application.routes.draw do
-    root to: "creatures#index"
-
-    resources :creatures, except: [:delete, :update]
-  end
-  ```
-  </p>
-</details>
-
-#### 2. Set up the creatures `edit` action
+#### 1. Set up the creatures `edit` action
 
 Using your `creatures#new` and `creatures#show` method as inspiration, you can write the `creatures#edit` method in the creatures controller:
 
@@ -571,7 +489,7 @@ Using your `creatures#new` and `creatures#show` method as inspiration, you can w
   </p>
 </details>
 
-#### 3. Set up the view for the edit creature form
+#### 2. Set up the view for the edit creature form
 
 Create an `edit.html.erb` view inside `views/creatures`. Jump-start the edit form by copying the form from `views/creatures/new.html.erb` into `views/creatures/edit.html.erb`:
 
@@ -592,30 +510,7 @@ Create an `edit.html.erb` view inside `views/creatures`. Jump-start the edit for
 
 Go to `localhost:3000/creatures/1/edit` in the browser to see what it looks like so far.  Check the `method` and `action` of the form. Also look at the hidden input with `name="_method"`.  What is it doing? The Rails form helper knows to turn this same code into an edit form because you're on the edit page!
 
-#### 4. Define a route to `update` a specific creature
-
-The update route will use the `id` of the creature to be updated. 
-
-<details>
-  <summary>Hint:</summary>
-  <p>
-  ```ruby
-  #
-  # config/routes.rb
-  #
-
-  Rails.application.routes.draw do
-    root to: "creatures#index"
-
-    resources :creatures, except: [:delete]
-  end
-  ```
-  </p>
-</details>
-
-Run `rake routes` in the Terminal to see the newly created update routes.
-
-#### 5. Set up the creatures `update` action
+#### 3. Set up the creatures `update` action
 
 In the `CreaturesController`, define an `update` method:
 
@@ -662,32 +557,7 @@ Test your `creatures#update` method in the browser by editing the creature with 
 
 ## Part IV: Delete a creature with `destroy` (database)
 
-#### 1. Define a route to `destroy` a specific creature
-
-Following a similar pattern to our other routes, create a route to `destroy` (delete) a specific creature based on its `id`.
-
-<details>
-  <summary>Hint:</summary>
-  <p>
-
-  ```ruby
-  #
-  # config/routes.rb
-  #
-
-  Rails.application.routes.draw do
-    root to: "creatures#index"
-
-    resources :creatures
-  end
-  ```
-  </p>
-</details>
-
-At this point, you're using all the RESTful routes for creatures.
-
-
-#### 2. Set up the creatures `destroy` action
+#### 1. Set up the creatures `destroy` action
 
 In the `CreaturesController`, define an `destroy` method:
 
@@ -726,7 +596,7 @@ In the `CreaturesController`, define an `destroy` method:
   </p>
 </details>
 
-#### 3. Add a delete button
+#### 2. Add a delete button
 
 Add a delete button to the view that displays a single creature:
 <details>
